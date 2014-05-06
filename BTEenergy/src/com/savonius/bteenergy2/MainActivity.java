@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.Timer;
@@ -42,6 +43,25 @@ import com.savonius.bteenergy.R;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+
+    String sDEVICEID="99"; // 75 Miguel,  99 Javacasm
+    
+    String sERROR="ERROR";
+	String sMAX_POWER_COMMAND="M";
+	String sMIN_POWER_COMMAND="m";
+	String sCURRENT_POWER_COMMAND="c";
+	String sREAD_HISTORICO_COMMAND="r";
+	String sSET_TIME_COMMAND="T";
+	String sRESET_COMMAND="R";
+	String sDELETE_SD_COMMAND="d";
+	byte [] bMAX_POWER_COMMAND=sMAX_POWER_COMMAND.getBytes();
+	byte [] bMIN_POWER_COMMAND=sMIN_POWER_COMMAND.getBytes();
+	byte [] bCURRENT_POWER_COMMAND=sCURRENT_POWER_COMMAND.getBytes();
+	byte [] bSET_TIME_COMMAND=sSET_TIME_COMMAND.getBytes();
+	byte [] bRESET_COMMAND=sRESET_COMMAND.getBytes();
+	byte [] bDELETE_SD_COMMAND=sDELETE_SD_COMMAND.getBytes();
+	byte [] bREAD_HISTORICO_COMMAND=sREAD_HISTORICO_COMMAND.getBytes();
+
 	
 	private BluetoothAdapter mBluetoothAdapter;
 	private BluetoothSocket btSocket;
@@ -50,6 +70,7 @@ public class MainActivity extends ActionBarActivity
 	Number []consumos=new Number[10000];
 	
 	XYPlot plot;
+	static boolean bReadingValues=false;
 	public void callAsynchronousTask() {
 	    final Handler handler = new Handler();
 	    Timer timer = new Timer();
@@ -59,9 +80,12 @@ public class MainActivity extends ActionBarActivity
 	            handler.post(new Runnable() {
 	                public void run() {       
 	                    try {
-	                       PerformBackgroundTask performBackgroundTask = new PerformBackgroundTask();
+	                   //    PerformBackgroundTask performBackgroundTask = new PerformBackgroundTask();
 	                        // PerformBackgroundTask this class is the class that extends AsynchTask 
-	                        performBackgroundTask.execute();
+	                     //   performBackgroundTask.execute();
+	                        if (bReadingValues)
+	                     	    return;
+	                     	bReadingValues=true;
 	                        if(btSocket!=null)
 	                        {
 	                        //	performBackgroundTask.btSocket=btSocket;
@@ -80,9 +104,10 @@ public class MainActivity extends ActionBarActivity
 		                					plot=(XYPlot)findViewById(R.id.mySimpleXYPlot);
 		                        		
 		                        		
-		                        		Log.i("btEnergy","getData");
-		                        		if(plot!=null)
+		                        		Log.i("btEnergy","getData:"+iValor);
+		                        		if(plot!=null && ((iContador%5)==0))
 		                        		{
+		                        			Log.i("BTEnergy","Drawing");
 		                        			plot.clear();
 		                        		
 		                        			XYSeries series1 = new SimpleXYSeries(Arrays.asList(consumos),
@@ -90,7 +115,8 @@ public class MainActivity extends ActionBarActivity
 		                        				"Consumos");
 		                        		
 		                        			LineAndPointFormatter series1Format = new LineAndPointFormatter();
-		                        			series1Format.setPointLabelFormatter(new PointLabelFormatter());
+		                        			PointLabelFormatter plf=new PointLabelFormatter();
+		                        			series1Format.setPointLabelFormatter(plf);
 		                        			series1Format.configure(getApplicationContext(),R.xml.pfl1);
 	
 		                                // add a new series' to the xyplot:
@@ -103,11 +129,13 @@ public class MainActivity extends ActionBarActivity
 	                    } catch (Exception e) {
 	                        Log.d("btEnergy",e.getMessage());
 	                    }
+					bReadingValues=false;
 	                }
+	                
 	            });
 	        }
 	    };
-	    timer.schedule(doAsynchronousTask, 0, 500); //execute in every 50000 ms
+	    timer.schedule(doAsynchronousTask, 0, 1000); //execute in every 50000 ms
 	}
 	
 	void espera(long pausa)
@@ -119,31 +147,52 @@ public class MainActivity extends ActionBarActivity
 			e.printStackTrace();
 		}
 	}
+	int iMaxValue=0;
+	int iMinValue=0;
+	
+	void resetData()
+	{
+	  iMaxValue=0;
+	  iMinValue=0;
+	  consumos=new Number[10000];
+	  iContador=0;
+	  if(plot!=null)
+		  plot.clear();
+	}
+	
 	int iContador=0;
 	int getDatos()
 	{
 		int iValor=-1;
 		if(btSocket!=null && btSocket.isConnected()){
 			try {
-				OutputStream  mmOutStream = btSocket.getOutputStream();
-			
-
-			//mmOutStream.write(bytes);
-			InputStream  mmInputStream=btSocket.getInputStream();
-			espera(100);
-			BufferedReader br=new BufferedReader(new InputStreamReader(mmInputStream));
-			StringBuffer sb=new StringBuffer();
-			while(br.ready())
-			{
-				String sLine=br.readLine();
-				sb.append(sLine);
-				iValor=Integer.parseInt(sLine);
+				InputStream  mmInputStream=btSocket.getInputStream();
 				espera(100);
-				if(iValor!=-1)
-					consumos[iContador++]=iValor;
-				if(iContador>=consumos.length)
-					iContador=0;
-			}
+				BufferedReader br=new BufferedReader(new InputStreamReader(mmInputStream));
+				StringBuffer sb=new StringBuffer();
+				while(br.ready())
+				{
+					String sLine=br.readLine();
+					sb.append(sLine);
+					if(sLine.startsWith(sMAX_POWER_COMMAND))
+					{
+						iMaxValue=Integer.parseInt(sLine.substring(1));
+					}
+					else
+					if(sLine.startsWith(sMIN_POWER_COMMAND))
+					{
+						iMinValue=Integer.parseInt(sLine.substring(1));
+					}				
+					else
+					{
+						iValor=Integer.parseInt(sLine);
+						espera(100);
+						if(iValor!=-1)
+							consumos[iContador++]=iValor;
+						if(iContador>=consumos.length)
+							iContador=0;
+					}
+				}
 			
 			
 			} catch (IOException e) {
@@ -219,8 +268,7 @@ public class MainActivity extends ActionBarActivity
 	Set<BluetoothDevice> pariedDevices = mBluetoothAdapter.getBondedDevices();
 	if(pariedDevices.size() > 0){
 		for(BluetoothDevice device : pariedDevices){
-			//if(device.getAddress().endsWith("75"))
-			if(device.getAddress().endsWith("99"))
+			if(device.getAddress().endsWith(sDEVICEID))
 				btDevice=device;
 		}
 	}
@@ -253,13 +301,13 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.title_consumo);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.title_historico);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_comparativa);
                 break;
         }
     }
@@ -290,8 +338,13 @@ public class MainActivity extends ActionBarActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        boolean bValor=true;
+        
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        switch(id)
+        {
+         case R.id.action_connect:
+        
         	
         	if(btDevice!=null)
         	{
@@ -301,24 +354,103 @@ public class MainActivity extends ActionBarActivity
         	else
         	{
         		if(btSocket!=null)
-					try {
-						btSocket.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					btSocket.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
         		finally
         		{
         			btSocket=null;
         			btDevice=null;
         		}
         	}
-        	
-            return true;
+        	break;
+        	case R.id.action_reset:
+        		if(btSocket!=null && btSocket.isConnected())
+        		{
+        			enviaComando(bRESET_COMMAND );
+        			resetData();
+        		}
+        	    break;
+        	case R.id.action_historico:
+        	    {
+        	    	enviaComando(bREAD_HISTORICO_COMMAND);
+        	    	readHistorico();
+        	    }
+        	 case R.id.action_settime:
+        	    {
+        	    String sTime="T"+Long.toString(System.currentTimeMillis()/1000)+"t";
+		
+				enviaComando(sTime.getBytes(Charset.forName("ISO-8859-1")));
+        	    
+        	    }
+        	default:
+        		bValor=super.onOptionsItemSelected(item);
+        		break;
+            
         }
-        return super.onOptionsItemSelected(item);
+        	
+        return bValor;
     }
 
+
+	void readHistorico()
+	{
+		InputStream  mmInputStream=null;
+		try
+		{
+			mmInputStream=btSocket.getInputStream();
+			espera(100);
+			BufferedReader br=new BufferedReader(new InputStreamReader(mmInputStream));
+			StringBuffer sb=new StringBuffer();
+			while(br.ready())
+			{
+				String sLine=br.readLine();
+				sb.append(sLine);
+				
+				
+					espera(100);
+			
+			}
+			
+			
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+		}
+		finally
+		{
+			try {
+				if(mmInputStream!=null)
+			
+					mmInputStream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+	}
+
+    void enviaComando(byte[] bytes)
+    {
+    	if(btSocket==null)
+    	{
+    		Log.i("BTEnergy","Null btSocket trying to send command");
+    		return;
+    	}
+	    OutputStream mmOutStream;
+		try {
+			mmOutStream = btSocket.getOutputStream();
+			mmOutStream.write(bytes);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+    }
     /**
      * A placeholder fragment containing a simple view.
      */

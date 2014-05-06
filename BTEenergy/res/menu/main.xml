@@ -8,9 +8,24 @@
         android:title="@string/action_example"
         app:showAsAction="withText|ifRoom"/>
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_connect"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_connect"
         app:showAsAction="never"/>
-
+    <item
+        android:id="@+id/action_reset"
+        android:orderInCategory="100"
+        android:title="@string/action_reset"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_historico"
+        android:orderInCategory="100"
+        android:title="@string/action_historico"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_settime"
+        android:orderInCategory="100"
+        android:title="@string/action_settime"
+        app:showAsAction="never"/>
+    
 </menu>

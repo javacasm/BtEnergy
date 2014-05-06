@@ -1106,12 +1106,15 @@ containing a value of this type.
         public static final int action_bar_root=0x7f06001a;
         public static final int action_bar_subtitle=0x7f060023;
         public static final int action_bar_title=0x7f060022;
+        public static final int action_connect=0x7f060044;
         public static final int action_context_bar=0x7f06001d;
-        public static final int action_example=0x7f060045;
+        public static final int action_example=0x7f060048;
+        public static final int action_historico=0x7f060046;
         public static final int action_menu_divider=0x7f060016;
         public static final int action_menu_presenter=0x7f060017;
         public static final int action_mode_close_button=0x7f060024;
-        public static final int action_settings=0x7f060044;
+        public static final int action_reset=0x7f060045;
+        public static final int action_settime=0x7f060047;
         public static final int activity_chooser_view_content=0x7f060025;
         public static final int always=0x7f06000b;
         public static final int beginning=0x7f060011;
@@ -1136,7 +1139,7 @@ containing a value of this type.
         public static final int listView1=0x7f06003e;
         public static final int list_item=0x7f060029;
         public static final int middle=0x7f060012;
-        public static final int mySimpleXYPlot=0x7f060042;
+        public static final int mySimpleXYPlot=0x7f060041;
         public static final int navigation_drawer=0x7f06003f;
         public static final int never=0x7f060009;
         public static final int none=0x7f060010;
@@ -1164,7 +1167,7 @@ containing a value of this type.
         public static final int tabMode=0x7f060002;
         public static final int title=0x7f06002b;
         public static final int top_action_bar=0x7f060020;
-        public static final int txtvConsumo=0x7f060041;
+        public static final int txtvConsumo=0x7f060042;
         public static final int up=0x7f060021;
         public static final int useLogo=0x7f060003;
         public static final int withText=0x7f06000c;
@@ -1272,14 +1275,17 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0b000b;
+        public static final int action_connect=0x7f0b0014;
         public static final int action_example=0x7f0b0013;
-        public static final int action_settings=0x7f0b0014;
+        public static final int action_historico=0x7f0b0016;
+        public static final int action_reset=0x7f0b0015;
+        public static final int action_settime=0x7f0b0017;
         public static final int app_name=0x7f0b000d;
         public static final int navigation_drawer_close=0x7f0b0012;
         public static final int navigation_drawer_open=0x7f0b0011;
-        public static final int title_section1=0x7f0b000e;
-        public static final int title_section2=0x7f0b000f;
-        public static final int title_section3=0x7f0b0010;
+        public static final int title_comparativa=0x7f0b0010;
+        public static final int title_consumo=0x7f0b000e;
+        public static final int title_historico=0x7f0b000f;
     }
     public static final class style {
         /** 

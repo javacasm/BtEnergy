@@ -7,12 +7,12 @@
 
     <com.androidplot.xy.XYPlot
         android:id="@+id/mySimpleXYPlot"
-        android:layout_width="262dp"
-        android:layout_height="186dp"
+        android:layout_width="293dp"
+        android:layout_height="197dp"
         android:layout_marginLeft="36dp"
         android:layout_marginTop="100dp"
-        android:layout_x="29dp"
-        android:layout_y="209dp" />
+        android:layout_x="32dp"
+        android:layout_y="243dp" />
 
     <TextView
         android:id="@+id/txtvConsumo"
@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="60dp"
         android:layout_marginTop="120dp"
-        android:layout_x="229dp"
-        android:layout_y="123dp"
+        android:layout_x="259dp"
+        android:layout_y="144dp"
         android:text="  "
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="32sp" />

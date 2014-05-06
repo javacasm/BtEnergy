@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BTEenergy2</string>
-    <string name="title_section1">Consumo</string>
-    <string name="title_section2">Historico</string>
-    <string name="title_section3">Comparativa</string>
+    <string name="app_name">BTEenergy</string>
+    <string name="title_consumo">Consumo</string>
+    <string name="title_historico">Historico</string>
+    <string name="title_comparativa">Comparativa</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">  </string>
-    <string name="action_settings">Conexión Bluetooth</string>
-
+    <string name="action_connect">Conexión Bluetooth</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_historico">Recuperar Historico</string>
+    <string name="action_settime">Establecer Hora</string>
 </resources>
